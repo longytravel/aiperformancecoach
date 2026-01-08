@@ -1,0 +1,15 @@
+Metric,Industry_Average,Top_Quartile,Bottom_Quartile,Unit,Description
+FCR_Pct,72,82,62,percent,First Call Resolution - UK Banking average
+Quality_Pct,84,92,76,percent,Quality Assurance scores
+CSAT_Pct,82,90,74,percent,Customer Satisfaction Score
+NPS,38,52,24,score,Net Promoter Score
+AHT_Min,7.2,5.8,9.0,minutes,Average Handle Time
+Hold_Min,1.4,0.9,2.2,minutes,Average Hold Time
+ACW_Min,1.8,1.2,2.6,minutes,After Call Work Time
+Adherence_Pct,91,96,85,percent,Schedule Adherence
+Shrinkage_Pct,12,8,18,percent,Shrinkage Rate
+Transfer_Pct,14,8,22,percent,Transfer Rate
+Repeat_Call_Pct,18,12,26,percent,Repeat Call Rate
+Complaint_Rate,4.2,2.0,7.5,per_1000_calls,Complaints per 1000 calls
+Sentiment_Score,0.35,0.50,0.15,score,Call Sentiment (-1 to +1)
+Critical_Errors,0.3,0,1.2,count,Critical Compliance Errors per month

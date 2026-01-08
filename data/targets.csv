@@ -1,0 +1,5 @@
+Tenure_Band,FCR_Target,Quality_Target,CSAT_Target,AHT_Target,Adherence_Target,Hold_Target,ACW_Target,Shrinkage_Target,Transfer_Target,Repeat_Call_Target,Complaint_Rate_Target,NPS_Target
+Attaining Foundation,65,80,80,9.0,88,2.0,2.5,16,22,26,7.0,28
+Attaining Competence,72,85,83,7.5,90,1.5,2.0,13,17,21,5.0,38
+Maintaining Competence,78,88,86,6.5,92,1.2,1.7,11,13,17,4.0,45
+Maintaining Excellence,82,92,90,6.0,95,1.0,1.4,9,10,14,3.0,52

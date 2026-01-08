@@ -1,0 +1,101 @@
+Colleague_ID,Objective_ID,Objective_Type,Category,Objective_Text,Target_Value,Baseline_Value,Current_Value,Target_Date,Status,Progress_Pct
+C001,OBJ001,Metric,Quality,Achieve quality score of 80%,80,68,79,2024-12-31,On Track,85
+C001,OBJ002,Metric,CX,Achieve FCR of 65%,65,52,65,2024-12-31,Achieved,100
+C001,OBJ003,Development,Learning,Complete onboarding training modules,100,0,90,2024-12-31,On Track,90
+C001,OBJ004,Development,Learning,Shadow 10 calls with mentor,10,0,8,2024-12-31,On Track,80
+C002,OBJ005,Metric,Quality,Achieve quality score of 80%,80,70,80,2024-12-31,Achieved,100
+C002,OBJ006,Metric,CX,Achieve FCR of 65%,65,55,67,2024-12-31,Achieved,100
+C002,OBJ007,Development,Learning,Complete onboarding training modules,100,0,100,2024-12-31,Achieved,100
+C002,OBJ008,Development,Learning,Pass product knowledge assessment,100,0,85,2024-12-31,On Track,85
+C003,OBJ009,Metric,Quality,Achieve quality score of 85%,85,80,86,2024-12-31,Achieved,100
+C003,OBJ010,Metric,CX,Achieve FCR of 72%,72,66,74,2024-12-31,Achieved,100
+C003,OBJ011,Metric,Efficiency,Reduce AHT to 7.5 minutes,7.5,8.2,7.3,2024-12-31,Achieved,100
+C003,OBJ012,Development,Learning,Complete advanced product training,100,0,100,2024-12-31,Achieved,100
+C004,OBJ013,Metric,Quality,Maintain quality score above 88%,88,85,89,2024-12-31,Achieved,100
+C004,OBJ014,Metric,CX,Achieve FCR of 78%,78,74,79,2024-12-31,Achieved,100
+C004,OBJ015,Development,Learning,Complete specialist certification,100,0,75,2024-12-31,On Track,75
+C004,OBJ016,Development,Mentoring,Support one new starter,1,0,1,2024-12-31,Achieved,100
+C005,OBJ017,Metric,Quality,Maintain quality score above 88%,88,87,82,2024-12-31,At Risk,65
+C005,OBJ018,Metric,CX,Achieve FCR of 78%,78,76,71,2024-12-31,Behind,55
+C005,OBJ019,Metric,Efficiency,Maintain AHT below 6.5 minutes,6.5,6.5,7.2,2024-12-31,At Risk,40
+C005,OBJ020,Development,Learning,Achieve zero critical errors for 3 months,3,0,1,2024-12-31,Behind,33
+C006,OBJ021,Metric,Quality,Maintain quality score above 92%,92,90,93,2024-12-31,Achieved,100
+C006,OBJ022,Metric,CX,Achieve FCR of 82%,82,80,85,2024-12-31,Achieved,100
+C006,OBJ023,Development,Mentoring,Mentor 2+ new colleagues,2,0,2,2024-12-31,Achieved,100
+C006,OBJ024,Development,Leadership,Lead a team training session,1,0,1,2024-12-31,Achieved,100
+C007,OBJ025,Metric,Quality,Maintain quality score above 92%,92,89,92,2024-12-31,Achieved,100
+C007,OBJ026,Metric,CX,Achieve FCR of 82%,82,79,84,2024-12-31,Achieved,100
+C007,OBJ027,Development,Process,Contribute to process improvement,1,0,1,2024-12-31,Achieved,100
+C008,OBJ028,Metric,Quality,Achieve quality score of 80%,80,60,74,2024-12-31,On Track,70
+C008,OBJ029,Metric,CX,Achieve FCR of 65%,65,42,56,2024-12-31,At Risk,55
+C008,OBJ030,Development,Learning,Complete onboarding training modules,100,0,65,2024-12-31,On Track,65
+C008,OBJ031,Development,Learning,Shadow 10 calls with mentor,10,0,6,2024-12-31,On Track,60
+C009,OBJ032,Metric,Quality,Achieve quality score of 85%,85,76,84,2024-12-31,On Track,90
+C009,OBJ033,Metric,CX,Achieve FCR of 72%,72,64,72,2024-12-31,Achieved,100
+C009,OBJ034,Metric,Efficiency,Reduce AHT to 7.5 minutes,7.5,8.5,7.6,2024-12-31,On Track,95
+C010,OBJ035,Metric,Quality,Achieve quality score of 85%,85,81,87,2024-12-31,Achieved,100
+C010,OBJ036,Metric,CX,Achieve FCR of 72%,72,68,75,2024-12-31,Achieved,100
+C010,OBJ037,Development,Learning,Shadow 5 complex/escalated calls,5,0,5,2024-12-31,Achieved,100
+C011,OBJ038,Metric,Quality,Maintain quality score above 88%,88,84,88,2024-12-31,Achieved,100
+C011,OBJ039,Metric,CX,Achieve FCR of 78%,78,73,78,2024-12-31,Achieved,100
+C011,OBJ040,Development,Learning,Complete specialist certification,100,0,80,2024-12-31,On Track,80
+C012,OBJ041,Metric,Quality,Maintain quality score above 88%,88,84,78,2024-12-31,Behind,45
+C012,OBJ042,Metric,CX,Achieve FCR of 78%,78,73,68,2024-12-31,Behind,40
+C012,OBJ043,Metric,Efficiency,Maintain AHT below 6.5 minutes,6.5,6.8,7.4,2024-12-31,Behind,20
+C012,OBJ044,Development,Learning,Achieve zero critical errors for 3 months,3,0,1,2024-12-31,Behind,33
+C013,OBJ045,Metric,Quality,Maintain quality score above 92%,92,88,91,2024-12-31,On Track,90
+C013,OBJ046,Metric,CX,Achieve FCR of 82%,82,78,82,2024-12-31,Achieved,100
+C013,OBJ047,Development,Mentoring,Mentor 2+ new colleagues,2,0,2,2024-12-31,Achieved,100
+C014,OBJ048,Metric,Quality,Maintain quality score above 92%,92,87,90,2024-12-31,On Track,85
+C014,OBJ049,Metric,CX,Achieve FCR of 82%,82,77,81,2024-12-31,On Track,95
+C014,OBJ050,Development,Leadership,Lead a team training session,1,0,0,2024-12-31,On Track,50
+C015,OBJ051,Metric,Quality,Achieve quality score of 80%,80,66,78,2024-12-31,On Track,85
+C015,OBJ052,Metric,CX,Achieve FCR of 65%,65,50,64,2024-12-31,On Track,90
+C015,OBJ053,Development,Learning,Complete onboarding training modules,100,0,80,2024-12-31,On Track,80
+C016,OBJ054,Metric,Quality,Achieve quality score of 85%,85,78,85,2024-12-31,Achieved,100
+C016,OBJ055,Metric,CX,Achieve FCR of 72%,72,65,73,2024-12-31,Achieved,100
+C016,OBJ056,Development,Learning,Complete advanced product training,100,0,90,2024-12-31,On Track,90
+C017,OBJ057,Metric,Quality,Achieve quality score of 85%,85,82,87,2024-12-31,Achieved,100
+C017,OBJ058,Metric,CX,Achieve FCR of 72%,72,70,76,2024-12-31,Achieved,100
+C017,OBJ059,Metric,Efficiency,Reduce AHT by 10% vs baseline,6.7,7.4,7.0,2024-12-31,On Track,85
+C018,OBJ060,Metric,Quality,Maintain quality score above 88%,88,83,76,2024-12-31,Behind,35
+C018,OBJ061,Metric,CX,Achieve FCR of 78%,78,72,66,2024-12-31,Behind,30
+C018,OBJ062,Metric,Efficiency,Maintain AHT below 6.5 minutes,6.5,6.9,7.6,2024-12-31,Behind,15
+C018,OBJ063,Development,Learning,Complete specialist certification,100,0,40,2024-12-31,Behind,40
+C019,OBJ064,Metric,Quality,Maintain quality score above 88%,88,85,88,2024-12-31,Achieved,100
+C019,OBJ065,Metric,CX,Achieve FCR of 78%,78,75,79,2024-12-31,Achieved,100
+C019,OBJ066,Development,Mentoring,Support one new starter,1,0,1,2024-12-31,Achieved,100
+C020,OBJ067,Metric,Quality,Maintain quality score above 92%,92,88,91,2024-12-31,On Track,92
+C020,OBJ068,Metric,CX,Achieve FCR of 82%,82,79,82,2024-12-31,Achieved,100
+C020,OBJ069,Development,Process,Contribute to process improvement,1,0,1,2024-12-31,Achieved,100
+C021,OBJ070,Metric,Quality,Maintain quality score above 92%,92,87,90,2024-12-31,On Track,88
+C021,OBJ071,Metric,CX,Achieve FCR of 82%,82,78,81,2024-12-31,On Track,95
+C021,OBJ072,Development,Mentoring,Mentor 2+ new colleagues,2,0,1,2024-12-31,On Track,50
+C022,OBJ073,Metric,Quality,Achieve quality score of 80%,80,69,79,2024-12-31,On Track,88
+C022,OBJ074,Metric,CX,Achieve FCR of 65%,65,54,66,2024-12-31,Achieved,100
+C022,OBJ075,Development,Learning,Complete onboarding training modules,100,0,85,2024-12-31,On Track,85
+C023,OBJ076,Metric,Quality,Achieve quality score of 85%,85,79,85,2024-12-31,Achieved,100
+C023,OBJ077,Metric,CX,Achieve FCR of 72%,72,66,73,2024-12-31,Achieved,100
+C023,OBJ078,Metric,Efficiency,Reduce AHT to 7.5 minutes,7.5,8.2,7.4,2024-12-31,Achieved,100
+C024,OBJ079,Metric,Quality,Achieve quality score of 85%,85,73,68,2024-12-31,Behind,25
+C024,OBJ080,Metric,CX,Achieve FCR of 72%,72,61,56,2024-12-31,Behind,15
+C024,OBJ081,Metric,Efficiency,Reduce AHT to 7.5 minutes,7.5,8.8,9.2,2024-12-31,Behind,0
+C024,OBJ082,Development,Learning,Complete advanced product training,100,0,50,2024-12-31,Behind,50
+C025,OBJ083,Metric,Quality,Maintain quality score above 88%,88,85,88,2024-12-31,Achieved,100
+C025,OBJ084,Metric,CX,Achieve FCR of 78%,78,74,78,2024-12-31,Achieved,100
+C025,OBJ085,Development,Learning,Complete specialist certification,100,0,85,2024-12-31,On Track,85
+C026,OBJ086,Metric,Quality,Maintain quality score above 88%,88,84,87,2024-12-31,On Track,90
+C026,OBJ087,Metric,CX,Achieve FCR of 78%,78,73,77,2024-12-31,On Track,92
+C026,OBJ088,Development,Mentoring,Support one new starter,1,0,1,2024-12-31,Achieved,100
+C027,OBJ089,Metric,Quality,Maintain quality score above 92%,92,88,91,2024-12-31,On Track,92
+C027,OBJ090,Metric,CX,Achieve FCR of 82%,82,79,82,2024-12-31,Achieved,100
+C027,OBJ091,Development,Leadership,Lead a team training session,1,0,1,2024-12-31,Achieved,100
+C028,OBJ092,Metric,Quality,Maintain quality score above 92%,92,87,90,2024-12-31,On Track,88
+C028,OBJ093,Metric,CX,Achieve FCR of 82%,82,78,81,2024-12-31,On Track,95
+C028,OBJ094,Development,Process,Contribute to process improvement,1,0,0,2024-12-31,On Track,50
+C029,OBJ095,Metric,Quality,Achieve quality score of 85%,85,80,86,2024-12-31,Achieved,100
+C029,OBJ096,Metric,CX,Achieve FCR of 72%,72,67,74,2024-12-31,Achieved,100
+C029,OBJ097,Metric,Efficiency,Reduce AHT to 7.5 minutes,7.5,8.0,7.3,2024-12-31,Achieved,100
+C030,OBJ098,Metric,Quality,Maintain quality score above 88%,88,84,87,2024-12-31,On Track,90
+C030,OBJ099,Metric,CX,Achieve FCR of 78%,78,73,77,2024-12-31,On Track,92
+C030,OBJ100,Development,Mentoring,Support one new starter,1,0,0,2024-12-31,On Track,50
