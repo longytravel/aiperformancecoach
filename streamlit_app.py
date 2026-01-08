@@ -34,7 +34,7 @@ from utils.calculations import (
 )
 from utils.ai_prompts import (
     SYSTEM_PROMPT, get_colleague_summary_prompt, get_struggling_analysis_prompt,
-    get_coaching_plan_prompt, get_chat_context_prompt
+    get_coaching_plan_prompt, get_chat_context_prompt, get_valued_recognition_prompt
 )
 
 # Page configuration
@@ -652,6 +652,9 @@ def show_trends(colleagues, metrics, targets, combined):
 
     col1, col2 = st.columns(2)
 
+    # Store top improved for Valued feature
+    top_improved_data = []
+
     with col1:
         st.markdown("**📈 Most Improved**")
         # Calculate month-over-month change
@@ -671,6 +674,17 @@ def show_trends(colleagues, metrics, targets, combined):
             for _, row in top_improved.iterrows():
                 colleague = colleagues[colleagues['Colleague_ID'] == row['Colleague_ID']].iloc[0]
                 st.write(f"**{colleague['Name']}** ({colleague['Team']}): {row['Change']:+.1f}")
+                # Store for Valued feature
+                top_improved_data.append({
+                    'colleague_id': row['Colleague_ID'],
+                    'name': colleague['Name'],
+                    'team': colleague['Team'],
+                    'tenure_band': colleague['Tenure_Band'],
+                    'metric_name': selected_metric,
+                    'previous_value': row[f'{metric_col}_prev'],
+                    'current_value': row[f'{metric_col}_now'],
+                    'change': row['Change']
+                })
 
     with col2:
         st.markdown("**📉 Needs Support**")
@@ -683,6 +697,97 @@ def show_trends(colleagues, metrics, targets, combined):
             for _, row in needs_support.iterrows():
                 colleague = colleagues[colleagues['Colleague_ID'] == row['Colleague_ID']].iloc[0]
                 st.write(f"**{colleague['Name']}** ({colleague['Team']}): {row['Change']:+.1f}")
+
+    # Valued Recognition Section
+    st.markdown("---")
+    st.subheader("🏆 Send Valued Recognition")
+    st.markdown("Recognise your top improvers with a personalised Valued card. AI will generate a heartfelt, specific message for each colleague based on their achievements.")
+
+    # Initialize session state for valued cards
+    if 'valued_cards' not in st.session_state:
+        st.session_state.valued_cards = None
+
+    col_btn1, col_btn2, col_space = st.columns([1, 1, 3])
+
+    with col_btn1:
+        if st.button("✨ Generate Valued Cards", type="primary", disabled=len(top_improved_data) == 0):
+            st.session_state.valued_cards = []
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+
+            for i, improver in enumerate(top_improved_data):
+                status_text.text(f"Generating Valued card for {improver['name']}...")
+                progress_bar.progress((i + 1) / len(top_improved_data))
+
+                # Generate the recognition message
+                prompt = get_valued_recognition_prompt(
+                    colleague_name=improver['name'],
+                    team=improver['team'],
+                    tenure_band=improver['tenure_band'],
+                    metric_name=improver['metric_name'],
+                    previous_value=improver['previous_value'],
+                    current_value=improver['current_value'],
+                    change=improver['change']
+                )
+
+                message = call_claude(prompt)
+                st.session_state.valued_cards.append({
+                    'name': improver['name'],
+                    'team': improver['team'],
+                    'metric': improver['metric_name'],
+                    'change': improver['change'],
+                    'message': message
+                })
+
+            status_text.text("All Valued cards generated!")
+            progress_bar.empty()
+
+    with col_btn2:
+        if st.session_state.valued_cards:
+            if st.button("🗑️ Clear Cards"):
+                st.session_state.valued_cards = None
+                st.rerun()
+
+    # Display generated Valued cards
+    if st.session_state.valued_cards:
+        st.markdown("---")
+        st.markdown("### 📧 Preview: Valued Cards Ready to Send")
+        st.info("In production, clicking 'Send' would email these to each colleague via the Valued system.")
+
+        for card in st.session_state.valued_cards:
+            with st.container():
+                st.markdown(f"""
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; padding: 20px; margin: 15px 0; color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <div>
+                            <h3 style="margin: 0; color: white;">🌟 Valued Recognition</h3>
+                            <p style="margin: 5px 0 0 0; opacity: 0.9;">To: {card['name']} ({card['team']})</p>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.2); padding: 8px 15px; border-radius: 20px;">
+                            <span style="font-size: 14px;">{card['metric']}: {card['change']:+.1f}</span>
+                        </div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.95); border-radius: 8px; padding: 15px; color: #333;">
+                        <p style="margin: 0; line-height: 1.6;">{card['message']}</p>
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
+
+        # Export all cards
+        st.markdown("---")
+        all_cards_text = "VALUED RECOGNITION CARDS\n" + "=" * 50 + "\n\n"
+        for card in st.session_state.valued_cards:
+            all_cards_text += f"TO: {card['name']} ({card['team']})\n"
+            all_cards_text += f"ACHIEVEMENT: {card['metric']} improved by {card['change']:+.1f}\n\n"
+            all_cards_text += f"{card['message']}\n"
+            all_cards_text += "\n" + "-" * 50 + "\n\n"
+
+        st.download_button(
+            label="📥 Export All Valued Cards",
+            data=all_cards_text,
+            file_name=f"valued_cards_{pd.Timestamp.now().strftime('%Y%m%d')}.txt",
+            mime="text/plain"
+        )
 
 
 # ============== PAGE: STRUGGLING COLLEAGUES ==============

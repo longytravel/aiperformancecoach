@@ -223,3 +223,47 @@ Provide:
 2. Where each cohort excels
 3. Recommendations for each cohort
 4. Insights on what might be driving the differences"""
+
+
+def get_valued_recognition_prompt(colleague_name, team, tenure_band, metric_name, previous_value, current_value, change, additional_context=None):
+    """Generate a heartfelt, specific recognition message for the Valued system."""
+
+    # Determine if improvement is increase or decrease based on metric
+    improvement_direction = "increased" if change > 0 else "decreased"
+    abs_change = abs(change)
+
+    context_section = ""
+    if additional_context:
+        context_section = f"\nADDITIONAL CONTEXT:\n{additional_context}"
+
+    return f"""Write a heartfelt, specific recognition message for our "Valued" employee recognition system.
+
+COLLEAGUE DETAILS:
+- Name: {colleague_name}
+- Team: {team}
+- Tenure: {tenure_band}
+
+ACHIEVEMENT THIS MONTH:
+- Metric: {metric_name}
+- Previous: {previous_value}
+- Current: {current_value}
+- Improvement: {improvement_direction} by {abs_change:.1f}
+{context_section}
+
+REQUIREMENTS:
+1. Start with "Hi {colleague_name},"
+2. Be SPECIFIC about what they achieved - mention the actual numbers and the metric
+3. Explain WHY this improvement matters (to customers, to the team, to the business)
+4. Acknowledge the effort required to achieve this - what behaviours likely drove this improvement?
+5. Be warm and genuine - this should feel personal, not corporate
+6. Keep it to 3-4 sentences maximum - concise but meaningful
+7. End with encouragement for continued success
+8. Sign off as "Your Leadership Team"
+
+DO NOT:
+- Use generic phrases like "great job" or "well done" without specifics
+- Be overly formal or corporate-sounding
+- Make it longer than necessary
+- Use emojis
+
+The tone should be: proud, specific, warm, and motivating."""
