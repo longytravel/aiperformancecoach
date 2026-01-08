@@ -159,6 +159,7 @@ def call_claude(prompt, system_prompt=SYSTEM_PROMPT):
         message = client.messages.create(
             model="claude-opus-4-5-20251101",
             max_tokens=1024,
+            temperature=0.3,  # Lower temperature for consistent, data-driven recommendations
             system=system_prompt,
             messages=[{"role": "user", "content": prompt}]
         )
