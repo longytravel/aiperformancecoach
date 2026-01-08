@@ -1149,6 +1149,21 @@ Latest Month Metrics (December 2024):
 {targets.to_string()}
 """)
 
+                # Add learning library
+                learning_library = load_learning_library()
+                context_parts.append("\n=== AVAILABLE LEARNING & SUPPORT COURSES (Workday) ===")
+                context_parts.append("These courses are available in our Workday learning system. Recommend specific courses based on colleague needs.\n")
+                for _, course in learning_library.iterrows():
+                    context_parts.append(f"""
+{course['Course_ID']}: {course['Course_Name']}
+  Category: {course['Category']} | Level: {course['Level']} | Duration: {course['Duration']} | Format: {course['Format']}
+  Description: {course['Description']}
+  Prerequisites: {course['Prerequisites']}
+  Manager must complete: {course['Manager_Pairing'] if pd.notna(course['Manager_Pairing']) and course['Manager_Pairing'] != 'None' else 'N/A'}
+  Triggers: {course['Triggers']}
+  External Resource: {course['External_Resource_Name']} - {course['External_Resource_URL']}
+""")
+
                 full_context = "\n".join(context_parts)
                 full_prompt = get_chat_context_prompt(prompt, full_context)
                 response = call_claude(full_prompt)
