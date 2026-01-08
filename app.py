@@ -44,6 +44,26 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Metric Tooltips - explanations for all key metrics
+METRIC_TOOLTIPS = {
+    "Quality": "Overall quality score from QA evaluations. Measures compliance, accuracy, and customer service standards on calls.",
+    "FCR": "First Call Resolution - percentage of calls resolved without the customer needing to call back. Higher is better.",
+    "CSAT": "Customer Satisfaction Score - rating from post-call surveys (1-100%). Measures how satisfied customers are with the service.",
+    "AHT": "Average Handle Time - total time spent on calls including talk time, hold time, and after-call work. Lower is generally better, but not at expense of quality.",
+    "NPS": "Net Promoter Score (-100 to +100) - measures customer loyalty by asking how likely they are to recommend us. Above 0 is good, above 50 is excellent.",
+    "Adherence": "Schedule Adherence - percentage of time the colleague follows their assigned schedule. Shows reliability and availability.",
+    "Hold_Time": "Average time customers are placed on hold during calls. Lower is better - long holds frustrate customers.",
+    "ACW": "After Call Work - time spent on wrap-up tasks after the call ends (notes, admin). Should be efficient but thorough.",
+    "Shrinkage": "Time away from phones for non-productive activities (breaks, meetings, training). Lower percentage means more availability.",
+    "Transfer": "Percentage of calls transferred to another team/colleague. Lower is better - indicates ability to resolve issues.",
+    "Repeat_Call": "Percentage of customers who call back within 7 days. Lower is better - indicates issues being fully resolved.",
+    "Complaint_Rate": "Number of formal complaints per 1000 calls. Lower is better - indicates quality of service.",
+    "Critical_Errors": "Serious compliance or quality failures requiring immediate attention. Should always be zero.",
+    "Sentiment": "AI-analysed customer sentiment from call recordings. Ranges from -1 (negative) to +1 (positive).",
+    "Call_Volume": "Total number of calls handled. Used to understand workload and capacity.",
+    "Performance_Score": "Overall weighted score (0-100) combining Quality (25%), FCR (20%), CSAT (20%), AHT (15%), Adherence (10%), and Compliance (10%).",
+}
+
 # Custom CSS
 st.markdown("""
 <style>
@@ -160,23 +180,24 @@ def show_overview_dashboard(colleagues, metrics, targets, benchmarks, combined):
     with col1:
         avg_quality = latest_metrics['Quality_Pct'].mean()
         st.metric("Avg Quality", f"{avg_quality:.1f}%",
-                  delta=f"{avg_quality - 85:.1f}%" if avg_quality > 85 else f"{avg_quality - 85:.1f}%")
+                  delta=f"{avg_quality - 85:.1f}%" if avg_quality > 85 else f"{avg_quality - 85:.1f}%",
+                  help=METRIC_TOOLTIPS["Quality"])
 
     with col2:
         avg_fcr = latest_metrics['FCR_Pct'].mean()
-        st.metric("Avg FCR", f"{avg_fcr:.1f}%")
+        st.metric("Avg FCR", f"{avg_fcr:.1f}%", help=METRIC_TOOLTIPS["FCR"])
 
     with col3:
         avg_csat = latest_metrics['CSAT_Pct'].mean()
-        st.metric("Avg CSAT", f"{avg_csat:.1f}%")
+        st.metric("Avg CSAT", f"{avg_csat:.1f}%", help=METRIC_TOOLTIPS["CSAT"])
 
     with col4:
         avg_aht = latest_metrics['AHT_Min'].mean()
-        st.metric("Avg AHT", f"{avg_aht:.1f} min")
+        st.metric("Avg AHT", f"{avg_aht:.1f} min", help=METRIC_TOOLTIPS["AHT"])
 
     with col5:
         total_calls = latest_metrics['Call_Volume'].sum()
-        st.metric("Total Calls", f"{total_calls:,}")
+        st.metric("Total Calls", f"{total_calls:,}", help=METRIC_TOOLTIPS["Call_Volume"])
 
     st.markdown("---")
 
@@ -369,7 +390,7 @@ def show_individual_view(colleagues, metrics, targets, objectives, combined):
         st.write(f"**Tenure:** {colleague['Tenure_Band']} ({colleague['Tenure_Months']} months)")
 
     with col2:
-        st.metric("Performance Score", f"{score:.1f}/100")
+        st.metric("Performance Score", f"{score:.1f}/100", help=METRIC_TOOLTIPS["Performance_Score"])
 
     with col3:
         st.markdown(f"""
@@ -390,27 +411,28 @@ def show_individual_view(colleagues, metrics, targets, objectives, combined):
     with tab1:
         st.subheader("Performance Scorecard")
 
-        # Metrics vs Targets
+        # Metrics vs Targets - (display name, actual value, target, unit, higher_is_better, tooltip_key)
         metrics_data = [
-            ("Quality Score", latest['Quality_Pct'], target_row['Quality_Target'], "%", True),
-            ("FCR", latest['FCR_Pct'], target_row['FCR_Target'], "%", True),
-            ("CSAT", latest['CSAT_Pct'], target_row['CSAT_Target'], "%", True),
-            ("AHT", latest['AHT_Min'], target_row['AHT_Target'], "min", False),
-            ("Adherence", latest['Adherence_Pct'], target_row['Adherence_Target'], "%", True),
-            ("Hold Time", latest['Hold_Min'], target_row['Hold_Target'], "min", False),
-            ("ACW", latest['ACW_Min'], target_row['ACW_Target'], "min", False),
-            ("NPS", latest['NPS'], target_row['NPS_Target'], "", True),
+            ("Quality Score", latest['Quality_Pct'], target_row['Quality_Target'], "%", True, "Quality"),
+            ("FCR", latest['FCR_Pct'], target_row['FCR_Target'], "%", True, "FCR"),
+            ("CSAT", latest['CSAT_Pct'], target_row['CSAT_Target'], "%", True, "CSAT"),
+            ("AHT", latest['AHT_Min'], target_row['AHT_Target'], "min", False, "AHT"),
+            ("Adherence", latest['Adherence_Pct'], target_row['Adherence_Target'], "%", True, "Adherence"),
+            ("Hold Time", latest['Hold_Min'], target_row['Hold_Target'], "min", False, "Hold_Time"),
+            ("ACW", latest['ACW_Min'], target_row['ACW_Target'], "min", False, "ACW"),
+            ("NPS", latest['NPS'], target_row['NPS_Target'], "", True, "NPS"),
         ]
 
         cols = st.columns(4)
-        for i, (name, actual, target, unit, higher_better) in enumerate(metrics_data):
+        for i, (name, actual, target, unit, higher_better, tooltip_key) in enumerate(metrics_data):
             rag = calculate_metric_rag(actual, target, higher_better)
             rag_color = get_rag_color(rag)
+            tooltip = METRIC_TOOLTIPS.get(tooltip_key, "")
 
             with cols[i % 4]:
                 st.markdown(f"""
-                <div style="background-color: #f8f9fa; border-radius: 8px; padding: 15px; margin: 5px 0; border-left: 4px solid {rag_color};">
-                    <p style="margin: 0; color: #666; font-size: 12px;">{name}</p>
+                <div style="background-color: #f8f9fa; border-radius: 8px; padding: 15px; margin: 5px 0; border-left: 4px solid {rag_color};" title="{tooltip}">
+                    <p style="margin: 0; color: #666; font-size: 12px;">{name} <span style="cursor: help; color: #999;" title="{tooltip}">ⓘ</span></p>
                     <p style="margin: 5px 0; font-size: 20px; font-weight: bold;">{actual}{unit}</p>
                     <p style="margin: 0; color: #999; font-size: 11px;">Target: {target}{unit}</p>
                 </div>
@@ -518,7 +540,8 @@ def show_trends(colleagues, metrics, targets, combined):
     col1, col2 = st.columns(2)
 
     with col1:
-        selected_metric = st.selectbox("Select Metric", list(metric_options.keys()))
+        selected_metric = st.selectbox("Select Metric", list(metric_options.keys()),
+                                       help="Choose a metric to view trends over time. Hover over metric cards elsewhere in the dashboard for detailed explanations.")
 
     with col2:
         group_by = st.selectbox("Group By", ["Overall", "Team", "Tenure Band"])
@@ -977,11 +1000,11 @@ def main():
     # Sidebar info
     st.sidebar.markdown("---")
     st.sidebar.markdown("### Quick Stats")
-    st.sidebar.metric("Total Colleagues", len(colleagues))
-    st.sidebar.metric("Avg Performance", f"{combined['Performance_Score'].mean():.1f}")
+    st.sidebar.metric("Total Colleagues", len(colleagues), help="Total number of colleagues in the dashboard")
+    st.sidebar.metric("Avg Performance", f"{combined['Performance_Score'].mean():.1f}", help=METRIC_TOOLTIPS["Performance_Score"])
 
     needing_support = len(combined[combined['Performance_Status'].isin(['Focus', 'Below'])])
-    st.sidebar.metric("Needing Support", needing_support)
+    st.sidebar.metric("Needing Support", needing_support, help="Colleagues in 'Focus' or 'Below' status who need additional coaching and support")
 
     # Render selected page
     if selected_page == "Overview Dashboard":
