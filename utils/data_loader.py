@@ -39,6 +39,83 @@ def load_industry_benchmarks():
     return pd.read_csv(DATA_DIR / "industry_benchmarks.csv")
 
 
+def load_learning_library():
+    """Load learning library with courses and support resources."""
+    return pd.read_csv(DATA_DIR / "learning_library.csv")
+
+
+def load_external_resources():
+    """Load external support resources."""
+    return pd.read_csv(DATA_DIR / "external_resources.csv")
+
+
+def get_recommended_learning(metrics_data, targets_data, tenure_band):
+    """
+    Get recommended learning based on performance gaps.
+    Returns courses that match the colleague's needs.
+    """
+    learning = load_learning_library()
+    recommendations = []
+
+    # Check each metric and find relevant courses
+    triggers = []
+
+    # Quality below target
+    if metrics_data['Quality_Pct'] < targets_data['Quality_Target']:
+        triggers.append('Quality below target')
+
+    # FCR below target
+    if metrics_data['FCR_Pct'] < targets_data['FCR_Target']:
+        triggers.append('Low FCR')
+
+    # CSAT below target
+    if metrics_data['CSAT_Pct'] < targets_data['CSAT_Target']:
+        triggers.append('Low CSAT')
+
+    # NPS below target
+    if metrics_data['NPS'] < targets_data['NPS_Target']:
+        triggers.append('Low NPS')
+
+    # AHT above target (lower is better)
+    if metrics_data['AHT_Min'] > targets_data['AHT_Target']:
+        triggers.append('High AHT')
+
+    # Hold time above target
+    if metrics_data['Hold_Min'] > targets_data['Hold_Target']:
+        triggers.append('High hold time')
+
+    # ACW above target
+    if metrics_data['ACW_Min'] > targets_data['ACW_Target']:
+        triggers.append('High ACW')
+
+    # Critical errors
+    if metrics_data['Critical_Errors'] > 0:
+        triggers.append('Critical errors')
+
+    # Complaint rate above target
+    if metrics_data['Complaint_Rate'] > targets_data['Complaint_Rate_Target']:
+        triggers.append('High complaint rate')
+
+    # High repeat calls
+    if metrics_data['Repeat_Call_Pct'] > targets_data['Repeat_Call_Target']:
+        triggers.append('High repeat calls')
+
+    # High transfer rate
+    if metrics_data['Transfer_Pct'] > targets_data['Transfer_Target']:
+        triggers.append('High transfer rate')
+
+    # Find matching courses
+    for _, course in learning.iterrows():
+        course_triggers = str(course['Triggers']).split('; ')
+        for trigger in triggers:
+            if any(trigger.lower() in ct.lower() for ct in course_triggers):
+                if course['Course_ID'] not in [r['Course_ID'] for r in recommendations]:
+                    recommendations.append(course.to_dict())
+                break
+
+    return recommendations, triggers
+
+
 def get_colleague_with_metrics(colleague_id):
     """Get a specific colleague with their latest metrics."""
     colleagues = load_colleagues()

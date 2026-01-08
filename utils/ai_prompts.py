@@ -34,8 +34,8 @@ When providing coaching advice:
 Always maintain a professional, supportive tone appropriate for manager-to-colleague coaching conversations."""
 
 
-def get_colleague_summary_prompt(colleague_data, metrics_data, targets_data, objectives_data):
-    """Generate prompt for colleague performance summary."""
+def get_colleague_summary_prompt(colleague_data, metrics_data, targets_data, objectives_data, learning_data=None):
+    """Generate prompt for colleague performance summary with learning support."""
 
     # Helper to determine status vs target
     def status(actual, target, higher_is_better=True):
@@ -46,7 +46,26 @@ def get_colleague_summary_prompt(colleague_data, metrics_data, targets_data, obj
             if actual <= target: return "ABOVE TARGET"
             else: return "BELOW TARGET"
 
-    return f"""Based on the following colleague data, provide a concise performance summary with strengths, areas for improvement, and coaching recommendations.
+    # Format learning recommendations if provided
+    learning_section = ""
+    if learning_data and len(learning_data) > 0:
+        learning_section = "\n\nAVAILABLE SUPPORT & LEARNING (from our Workday system):\n"
+        for course in learning_data[:10]:  # Limit to 10 courses
+            prereqs = course.get('Prerequisites', 'None')
+            manager_pair = course.get('Manager_Pairing', 'None')
+            external = course.get('External_Resource_Name', '')
+            external_url = course.get('External_Resource_URL', '')
+
+            learning_section += f"""
+- {course['Course_ID']}: {course['Course_Name']}
+  Category: {course['Category']} | Level: {course['Level']} | Duration: {course['Duration']} | Format: {course['Format']}
+  Description: {course['Description']}
+  Prerequisites: {prereqs}
+  Manager action required: {manager_pair if manager_pair != 'None' else 'No manager action required'}
+  External resource: {external} ({external_url})
+"""
+
+    return f"""Based on the following colleague data, provide a concise performance summary with strengths, areas for improvement, coaching recommendations, AND a tailored support plan with specific learning recommendations.
 
 COLLEAGUE PROFILE:
 - Name: {colleague_data['Name']}
@@ -71,12 +90,34 @@ PERFORMANCE vs TENURE-ADJUSTED TARGETS:
 
 OBJECTIVES STATUS:
 {objectives_data}
+{learning_section}
 
-Provide:
-1. A 2-3 sentence overall summary
-2. Top 2 strengths (metrics that are ABOVE TARGET)
-3. Top 2 areas for improvement (ONLY metrics that are BELOW TARGET - if none, say "Meeting all targets")
-4. 2-3 specific coaching recommendations for the next 1:1"""
+Provide a comprehensive support plan with the following sections:
+
+## Performance Summary
+A 2-3 sentence overall summary of this colleague's performance.
+
+## Strengths
+Top 2 strengths (metrics that are ABOVE TARGET).
+
+## Areas for Support
+Top 2 areas needing support (ONLY metrics that are BELOW TARGET - if none, say "Meeting all targets").
+
+## Coaching Recommendations
+2-3 specific coaching actions for the manager to take in the next 1:1.
+
+## Recommended Support & Learning Journey
+Based on the available courses above, recommend a tailored learning journey for this colleague. For EACH recommended course, include:
+1. The Course ID and name
+2. Why this course will help (linked to their specific metrics)
+3. Any prerequisites they need to complete first
+4. Any actions the MANAGER needs to take before or during the course
+5. The external resource link they can access immediately
+
+Structure the learning as a sequenced journey (what to do first, second, etc.) with a suggested timeline.
+
+## Manager Actions Required
+List any specific actions the manager must take to support this colleague's development (e.g., completing their own training, scheduling specific conversations, setting up shadowing)."""
 
 
 def get_struggling_analysis_prompt(colleague_data, metrics_history, targets_data, peer_comparison):

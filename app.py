@@ -23,7 +23,8 @@ sys.path.append(str(Path(__file__).parent))
 from utils.data_loader import (
     load_colleagues, load_monthly_metrics, load_targets,
     load_objectives, load_industry_benchmarks, get_all_data,
-    get_colleague_with_metrics, get_colleague_objectives
+    get_colleague_with_metrics, get_colleague_objectives,
+    load_learning_library, load_external_resources, get_recommended_learning
 )
 from utils.calculations import (
     calculate_performance_score, get_performance_status, get_status_color,
@@ -436,7 +437,7 @@ def show_individual_view(colleagues, metrics, targets, objectives, combined):
     st.markdown("---")
 
     # Tabs for different views
-    tab1, tab2, tab3, tab4 = st.tabs(["📊 Scorecard", "📈 Trends", "🎯 Objectives", "🤖 AI Coaching"])
+    tab1, tab2, tab3, tab4 = st.tabs(["📊 Scorecard", "📈 Trends", "🎯 Objectives", "🤖 AI Support Plan"])
 
     with tab1:
         st.subheader("Performance Scorecard")
@@ -538,24 +539,33 @@ def show_individual_view(colleagues, metrics, targets, objectives, combined):
             """, unsafe_allow_html=True)
 
     with tab4:
-        st.subheader("AI Coaching Insights")
+        st.subheader("AI-Powered Support Plan")
+        st.markdown("Generate a personalised support plan including tailored learning recommendations from Workday.")
 
         # Initialize session state for this colleague's coaching
         coaching_key = f"coaching_{selected_id}"
         if coaching_key not in st.session_state:
             st.session_state[coaching_key] = None
 
-        if st.button("Generate AI Coaching Summary", type="primary"):
-            with st.spinner("Generating insights..."):
+        if st.button("Generate AI Support Plan", type="primary"):
+            with st.spinner("Generating personalised support plan..."):
                 # Prepare objectives summary
                 obj_summary = "\n".join([f"- {row['Objective_Text']}: {row['Status']} ({row['Progress_Pct']}%)"
                                         for _, row in colleague_objectives.iterrows()])
+
+                # Get recommended learning based on performance gaps
+                learning_recs, triggers = get_recommended_learning(
+                    latest.to_dict(),
+                    target_row.to_dict(),
+                    colleague['Tenure_Band']
+                )
 
                 prompt = get_colleague_summary_prompt(
                     colleague.to_dict(),
                     latest.to_dict(),
                     target_row.to_dict(),
-                    obj_summary
+                    obj_summary,
+                    learning_recs
                 )
 
                 response = call_claude(prompt)
@@ -579,11 +589,11 @@ def show_individual_view(colleagues, metrics, targets, objectives, combined):
             col1, col2 = st.columns([1, 4])
             with col1:
                 st.download_button(
-                    label="📥 Export Coaching",
+                    label="📥 Export Support Plan",
                     data=export_content,
-                    file_name=f"coaching_{colleague['Name'].replace(' ', '_')}_{pd.Timestamp.now().strftime('%Y%m%d')}.txt",
+                    file_name=f"support_plan_{colleague['Name'].replace(' ', '_')}_{pd.Timestamp.now().strftime('%Y%m%d')}.txt",
                     mime="text/plain",
-                    help="Download the AI coaching insights as a text file"
+                    help="Download the support plan as a text file"
                 )
 
 
