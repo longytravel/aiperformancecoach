@@ -11,25 +11,41 @@ You have access to performance data including:
 - Learning metrics (Training Hours, Coaching Actions)
 - Yearly objectives and development goals
 
+IMPORTANT - TENURE-ADJUSTED TARGETS:
+Targets are adjusted based on colleague tenure. You will be provided with both the colleague's actual performance AND their tenure-specific targets.
+
+CRITICAL: Only flag a metric as an area for improvement if the actual value is BELOW the target for that colleague's tenure band. If a metric is AT or ABOVE target, it should be considered a strength or neutral - never a development area.
+
 Tenure Bands:
-- Attaining Foundation (0-3 months): New starters, learning basics
-- Attaining Competence (4-12 months): Building skills, increasing independence
-- Maintaining Competence (13-24 months): Consistent performer, reliable
-- Maintaining Excellence (25+ months): Expert, role model potential
+- Attaining Foundation (0-3 months): New starters, learning basics - LOWER targets
+- Attaining Competence (4-12 months): Building skills, increasing independence - MODERATE targets
+- Maintaining Competence (13-24 months): Consistent performer, reliable - HIGHER targets
+- Maintaining Excellence (25+ months): Expert, role model potential - HIGHEST targets
 
 When providing coaching advice:
-1. Be specific and actionable
-2. Consider tenure - new starters need different support than experienced colleagues
-3. Focus on 1-2 priority areas rather than overwhelming with feedback
-4. Suggest concrete next steps
-5. Be encouraging while being honest about areas needing improvement
-6. Reference UK banking context and compliance requirements where relevant
+1. ALWAYS compare actuals to the provided tenure-adjusted targets
+2. Be specific and actionable
+3. Consider tenure - new starters need different support than experienced colleagues
+4. Focus on 1-2 priority areas (ONLY metrics below target) rather than overwhelming with feedback
+5. Suggest concrete next steps
+6. Be encouraging while being honest about areas needing improvement
+7. Reference UK banking context and compliance requirements where relevant
 
 Always maintain a professional, supportive tone appropriate for manager-to-colleague coaching conversations."""
 
 
-def get_colleague_summary_prompt(colleague_data, metrics_data, objectives_data):
+def get_colleague_summary_prompt(colleague_data, metrics_data, targets_data, objectives_data):
     """Generate prompt for colleague performance summary."""
+
+    # Helper to determine status vs target
+    def status(actual, target, higher_is_better=True):
+        if higher_is_better:
+            if actual >= target: return "ABOVE TARGET"
+            else: return "BELOW TARGET"
+        else:  # Lower is better (AHT, Hold, ACW, etc.)
+            if actual <= target: return "ABOVE TARGET"
+            else: return "BELOW TARGET"
+
     return f"""Based on the following colleague data, provide a concise performance summary with strengths, areas for improvement, and coaching recommendations.
 
 COLLEAGUE PROFILE:
@@ -37,27 +53,33 @@ COLLEAGUE PROFILE:
 - Team: {colleague_data['Team']}
 - Tenure: {colleague_data['Tenure_Months']} months ({colleague_data['Tenure_Band']})
 
-LATEST PERFORMANCE METRICS:
-- Quality Score: {metrics_data['Quality_Pct']}%
-- FCR: {metrics_data['FCR_Pct']}%
-- CSAT: {metrics_data['CSAT_Pct']}%
-- NPS: {metrics_data['NPS']}
-- AHT: {metrics_data['AHT_Min']} minutes
-- Adherence: {metrics_data['Adherence_Pct']}%
-- Critical Errors: {metrics_data['Critical_Errors']}
-- Complaint Rate: {metrics_data['Complaint_Rate']} per 1,000 calls
+IMPORTANT: This colleague's targets are adjusted for their tenure band. Only flag metrics BELOW TARGET as improvement areas.
+
+PERFORMANCE vs TENURE-ADJUSTED TARGETS:
+| Metric | Actual | Target | Status |
+|--------|--------|--------|--------|
+| Quality Score | {metrics_data['Quality_Pct']}% | {targets_data['Quality_Target']}% | {status(metrics_data['Quality_Pct'], targets_data['Quality_Target'])} |
+| FCR | {metrics_data['FCR_Pct']}% | {targets_data['FCR_Target']}% | {status(metrics_data['FCR_Pct'], targets_data['FCR_Target'])} |
+| CSAT | {metrics_data['CSAT_Pct']}% | {targets_data['CSAT_Target']}% | {status(metrics_data['CSAT_Pct'], targets_data['CSAT_Target'])} |
+| NPS | {metrics_data['NPS']} | {targets_data['NPS_Target']} | {status(metrics_data['NPS'], targets_data['NPS_Target'])} |
+| AHT | {metrics_data['AHT_Min']} min | {targets_data['AHT_Target']} min | {status(metrics_data['AHT_Min'], targets_data['AHT_Target'], False)} |
+| Adherence | {metrics_data['Adherence_Pct']}% | {targets_data['Adherence_Target']}% | {status(metrics_data['Adherence_Pct'], targets_data['Adherence_Target'])} |
+| Hold Time | {metrics_data['Hold_Min']} min | {targets_data['Hold_Target']} min | {status(metrics_data['Hold_Min'], targets_data['Hold_Target'], False)} |
+| ACW | {metrics_data['ACW_Min']} min | {targets_data['ACW_Target']} min | {status(metrics_data['ACW_Min'], targets_data['ACW_Target'], False)} |
+| Critical Errors | {metrics_data['Critical_Errors']} | 0 | {"ABOVE TARGET" if metrics_data['Critical_Errors'] == 0 else "BELOW TARGET"} |
+| Complaint Rate | {metrics_data['Complaint_Rate']} | {targets_data['Complaint_Rate_Target']} | {status(metrics_data['Complaint_Rate'], targets_data['Complaint_Rate_Target'], False)} |
 
 OBJECTIVES STATUS:
 {objectives_data}
 
 Provide:
 1. A 2-3 sentence overall summary
-2. Top 2 strengths
-3. Top 2 areas for improvement
+2. Top 2 strengths (metrics that are ABOVE TARGET)
+3. Top 2 areas for improvement (ONLY metrics that are BELOW TARGET - if none, say "Meeting all targets")
 4. 2-3 specific coaching recommendations for the next 1:1"""
 
 
-def get_struggling_analysis_prompt(colleague_data, metrics_history, peer_comparison):
+def get_struggling_analysis_prompt(colleague_data, metrics_history, targets_data, peer_comparison):
     """Generate prompt for analyzing why a colleague is struggling."""
     return f"""Analyze why this colleague may be struggling and suggest interventions.
 
@@ -66,11 +88,23 @@ COLLEAGUE PROFILE:
 - Team: {colleague_data['Team']}
 - Tenure: {colleague_data['Tenure_Months']} months ({colleague_data['Tenure_Band']})
 
+TENURE-ADJUSTED TARGETS FOR THIS COLLEAGUE:
+- Quality: {targets_data['Quality_Target']}%
+- FCR: {targets_data['FCR_Target']}%
+- CSAT: {targets_data['CSAT_Target']}%
+- NPS: {targets_data['NPS_Target']}
+- AHT: {targets_data['AHT_Target']} min
+- Adherence: {targets_data['Adherence_Target']}%
+- Hold Time: {targets_data['Hold_Target']} min
+- Complaint Rate: {targets_data['Complaint_Rate_Target']}
+
 3-MONTH PERFORMANCE TREND:
 {metrics_history}
 
 COMPARISON TO PEERS (same tenure band):
 {peer_comparison}
+
+IMPORTANT: When analyzing, compare performance to the TENURE-ADJUSTED TARGETS above, not absolute values.
 
 Provide:
 1. Root cause analysis - what appears to be driving the performance issues?

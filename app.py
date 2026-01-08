@@ -156,7 +156,7 @@ def call_claude(prompt, system_prompt=SYSTEM_PROMPT):
 
     try:
         message = client.messages.create(
-            model="claude-sonnet-4-20250514",
+            model="claude-opus-4-5-20251101",
             max_tokens=1024,
             system=system_prompt,
             messages=[{"role": "user", "content": prompt}]
@@ -441,6 +441,10 @@ def show_individual_view(colleagues, metrics, targets, objectives, combined):
     with tab1:
         st.subheader("Performance Scorecard")
 
+        # Info box about tenure-adjusted targets
+        st.info(f"ℹ️ **Targets adjusted for tenure:** {colleague['Name']} is in the **{colleague['Tenure_Band']}** band ({colleague['Tenure_Months']} months). "
+                f"Targets shown below are calibrated for this experience level - newer colleagues have lower targets that increase as they develop.")
+
         # Metrics vs Targets - (display name, actual value, target, unit, higher_is_better, tooltip_key)
         metrics_data = [
             ("Quality Score", latest['Quality_Pct'], target_row['Quality_Target'], "%", True, "Quality"),
@@ -464,7 +468,7 @@ def show_individual_view(colleagues, metrics, targets, objectives, combined):
                 <div style="background-color: #f8f9fa; border-radius: 8px; padding: 15px; margin: 5px 0; border-left: 4px solid {rag_color};" title="{tooltip}">
                     <p style="margin: 0; color: #666; font-size: 12px;">{name} <span style="cursor: help; color: #999;" title="{tooltip}">ⓘ</span></p>
                     <p style="margin: 5px 0; font-size: 20px; font-weight: bold;">{actual}{unit}</p>
-                    <p style="margin: 0; color: #999; font-size: 11px;">Target: {target}{unit}</p>
+                    <p style="margin: 0; color: #999; font-size: 11px;" title="Target adjusted for {colleague['Tenure_Band']}">🎯 Target: {target}{unit}</p>
                 </div>
                 """, unsafe_allow_html=True)
 
@@ -550,6 +554,7 @@ def show_individual_view(colleagues, metrics, targets, objectives, combined):
                 prompt = get_colleague_summary_prompt(
                     colleague.to_dict(),
                     latest.to_dict(),
+                    target_row.to_dict(),
                     obj_summary
                 )
 
@@ -714,9 +719,12 @@ def show_struggling_colleagues(colleagues, metrics, targets, objectives, combine
             if st.button(f"Get AI Analysis", key=f"ai_{row['Colleague_ID']}"):
                 with st.spinner("Analyzing..."):
                     metrics_summary = colleague_metrics.to_string()
+                    # Get targets for this colleague's tenure band
+                    colleague_targets = targets[targets['Tenure_Band'] == row['Tenure_Band']].iloc[0]
                     prompt = get_struggling_analysis_prompt(
                         row.to_dict(),
                         metrics_summary,
+                        colleague_targets.to_dict(),
                         "Average in tenure band"
                     )
                     response = call_claude(prompt)
